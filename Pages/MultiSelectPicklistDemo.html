@@ -1,0 +1,151 @@
+<apex:page showHeader="false"
+           sidebar="false"
+           docType="html-5.0"
+           standardStylesheets="false"
+           applyBodyTag="false"
+           applyHtmlTag="false"
+           controller="MultiSelectPicklistDemoController">
+           
+    <html ng-app="MultiSelectPicklistDemo" 
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"> 
+        <head>
+            <!-- Include Lighting design System CSS -->
+            <apex:stylesheet value="{!URLFOR($Resource.LightningDesignSystem, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+            
+            <script>   
+            var app = angular.module('MultiSelectPicklistDemo', []);
+            app.controller('HomeController', ['$scope', function($scope) {
+            
+                //fetch the picklist values from controller
+                $scope.allPicklistValues= {!AllPicklistValues}; 
+                $scope.selectedPicklistValues = [];
+                $scope.selectedAddElementIndex = null;
+                $scope.selectedRemoveElementIndex = null;
+                
+                // Below function will help to set the index of element that needs to be added
+                $scope.setElementIndexToAdd = function(index) {
+                    $scope.selectedAddElementIndex= index;
+                }
+                
+                // Below function will add selected element to the selected elememt list and also removes the element from all element list 
+                $scope.addToSelectedPicklistValues = function() {
+                
+                    if($scope.selectedAddElementIndex != undefined || $scope.selectedAddElementIndex === 0){
+                        var selectedPicklistValue = $scope.allPicklistValues[$scope.selectedAddElementIndex];
+                        $scope.selectedPicklistValues.push(selectedPicklistValue);
+                        $scope.allPicklistValues.splice($scope.selectedAddElementIndex, 1); 
+                        $scope.selectedAddElementIndex = null;                
+                        selectedPicklistValue = null;
+                    }    
+                }
+                
+                // Below function will help to set the index of element that needs to be removed
+                $scope.setElementIndexToRemove = function(index) {
+                    
+                    $scope.selectedRemoveElementIndex = index; 
+                }
+                
+                // Below function will remove selected element from the selected elememt list and also add the element back to the all element list
+                $scope.removeFromSelectedPicklistValues = function() { 
+                    if($scope.selectedRemoveElementIndex != undefined || $scope.selectedRemoveElementIndex === 0){
+                        var selectedPicklistValueToRemove = $scope.selectedPicklistValues[$scope.selectedRemoveElementIndex ];
+                        $scope.selectedPicklistValues.splice($scope.selectedRemoveElementIndex , 1); 
+                        $scope.allPicklistValues.push(selectedPicklistValueToRemove);
+                        $scope.selectedRemoveElementIndex = null ;
+                        selectedPicklistValueToRemove  = null ;
+                    }    
+                }
+                
+        }]);
+        
+    </script>
+        </head>
+        <body ng-controller="HomeController">
+            <div class="slds">
+            
+                <!-- PAGE HEADER -->
+                <div class="slds-page-header" role="banner">
+                  <div class="slds-media slds-media--center">
+                    <div class="slds-media__figure">
+                      <svg aria-hidden="true" class="slds-icon slds-icon-standard-opportunity">
+                        <use xlink:href="{!URLFOR($Resource.LightningDesignSystem,'assets/icons/action-sprite/svg/symbols.svg#new_event')}"></use>
+                      </svg>
+                    </div>
+                    <div class="slds-media__body">
+                      <h1 class="slds-page-header__title slds-truncate" title="MULTISELECT PICKLIST EXAMPLE">MULTISELECT PICKLIST EXAMPLE</h1>
+                    </div>
+                    
+                  </div>
+                </div>
+                <!-- / PAGE HEADER -->
+                <br/>
+                <!-- Product Type label -->
+                <label class="slds-form-element__label">
+                      <span class="slds-badge slds-theme--alert-texture">Product Type </span>
+                </label>
+                <!-- Product Type label -->
+                <br/>
+                <br/>
+                
+                <div class="slds-picklist--draggable slds-grid">
+                    <!-- Left Hand side block -->
+                    <div class="slds-form-element">
+                        <span class="slds-form-element__label" aria-label="select-1">Picklist Values</span>
+                        <div class="slds-picklist slds-picklist--multi">
+                            <ul ng-model="allPicklistValues" class="picklist slds-picklist__options slds-picklist__options--multi shown">
+                                <div ng-repeat="item in allPicklistValues" class="app">
+                                    <li class="slds-picklist__item" aria-selected="false" tabindex="0" role="option" ng-click="setElementIndexToAdd($index)" ng-dblclick="setElementIndexToAdd($index);addToSelectedPicklistValues()" >
+                                        <span class="slds-truncate">
+                                            <span>{{item}}</span>
+                                        </span>
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- / Left Hand side block -->
+                    
+                    <!-- Right / Left Arrow -->
+                    <div class="slds-grid slds-grid--vertical">
+                        
+                        <button class="slds-button slds-button--icon-container">
+                            <svg aria-hidden="true" class="slds-button__icon" ng-click="addToSelectedPicklistValues()">
+                                <use xlink:href="{!URLFOR($Resource.LightningDesignSystem, 'assets/icons/utility-sprite/svg/symbols.svg#right')}" ></use>
+                            </svg>
+                            <span class="slds-assistive-text" >Right arrow</span>
+                        </button>
+                        
+                        <button class="slds-button slds-button--icon-container">
+                            <svg aria-hidden="true" class="slds-button__icon" ng-click="removeFromSelectedPicklistValues()">
+                                <use xlink:href="{!URLFOR($Resource.LightningDesignSystem, 'assets/icons/utility-sprite/svg/symbols.svg#left')}" ></use>
+                            </svg>
+                            <span class="slds-assistive-text" >Left arrow</span>
+                        </button>
+                    </div>
+                    <!-- / Right / Left Arrow -->
+                    
+                    <!-- Right Hand side block -->
+                    <div class="slds-form-element">
+                        <span class="slds-form-element__label" aria-label="select-2">Selected Values</span>
+                        <div  class="slds-picklist slds-picklist--multi" >                          
+                            <ul ng-model="selectedPicklistValues" class="picklist slds-picklist__options slds-picklist__options--multi shown">
+                                <div ng-repeat="item in selectedPicklistValues" class="app">
+                                    <li class="slds-picklist__item" aria-selected="false" tabindex="0" role="option" ng-click="setElementIndexToRemove($index)" ng-dblclick="setElementIndexToRemove($index);removeFromSelectedPicklistValues()">
+                                        <span class="slds-truncate">
+                                            <span class="items" >{{item}}</span>
+                                        </span>
+                                    </li>
+                                </div>
+                            </ul>                              
+                        </div>
+                    </div>
+                    <!-- / Right Hand side block -->
+                </div>
+            </div> 
+            <!-- Include Angular Resources  -->
+            <apex:includeScript value="{!URLFOR($Resource.AngularJs,'')}"/>          
+        </body>
+    </html>
+    
+</apex:page>
